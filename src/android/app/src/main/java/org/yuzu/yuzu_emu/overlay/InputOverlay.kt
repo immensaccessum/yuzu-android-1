@@ -352,7 +352,7 @@ class InputOverlay(context: Context, attrs: AttributeSet?) :
     }
 
     private fun addOverlayControls(layout: String) {
-        val windowSize = getSafeScreenSize(context, Pair(measuredWidth, measuredHeight))
+        val windowSize = getSafeScreenSize(context)
         if (preferences.getBoolean(Settings.PREF_BUTTON_A, true)) {
             overlayButtons.add(
                 initializeOverlayButton(
@@ -593,7 +593,7 @@ class InputOverlay(context: Context, attrs: AttributeSet?) :
     }
 
     private fun saveControlPosition(prefId: String, x: Int, y: Int, layout: String) {
-        val windowSize = getSafeScreenSize(context, Pair(measuredWidth, measuredHeight))
+        val windowSize = getSafeScreenSize(context)
         val min = windowSize.first
         val max = windowSize.second
         PreferenceManager.getDefaultSharedPreferences(YuzuApplication.appContext).edit()
@@ -968,17 +968,14 @@ class InputOverlay(context: Context, attrs: AttributeSet?) :
          * @return A pair of points, the first being the top left corner of the safe area,
          *                  the second being the bottom right corner of the safe area
          */
-        private fun getSafeScreenSize(
-            context: Context,
-            screenSize: Pair<Int, Int>
-        ): Pair<Point, Point> {
+        private fun getSafeScreenSize(context: Context): Pair<Point, Point> {
             // Get screen size
             val windowMetrics = WindowMetricsCalculator.getOrCreate()
                 .computeCurrentWindowMetrics(context as Activity)
-            var maxX = screenSize.first.toFloat()
-            var maxY = screenSize.second.toFloat()
-            var minX = 0
+            var maxY = windowMetrics.bounds.height().toFloat()
+            var maxX = windowMetrics.bounds.width().toFloat()
             var minY = 0
+            var minX = 0
 
             // If we have API access, calculate the safe area to draw the overlay
             var cutoutLeft = 0
@@ -1303,4 +1300,4 @@ class InputOverlay(context: Context, attrs: AttributeSet?) :
             return overlayDrawable
         }
     }
-}
+    }
